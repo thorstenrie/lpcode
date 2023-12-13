@@ -1,0 +1,7 @@
+var (
+	strFoo   string  = "foobar"           // test variable type string
+	errFoo   error   = fmt.Errorf(strFoo) // test variable type error
+	intFoo   int64   = 1234               // test variable type int64
+	floatFoo float64 = 1234               // test variable type float64
+)
+
