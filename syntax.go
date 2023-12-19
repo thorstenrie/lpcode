@@ -1,3 +1,5 @@
+// Does not check for correct syntax or arguments
+//
 // Copyright (c) 2023 thorstenrie.
 // All Rights Reserved. Use is governed with GNU Affero General Public License v3.0
 // that can be found in the LICENSE file.
@@ -254,16 +256,26 @@ func (code *Code) ShortVarDecl(a *ShortVarDeclArgs) *Code {
 	return code
 }
 
+// KeyedElementArgs contains the key and element to generate
+// a keyed element of a composite literal with KeyedElement
 type KeyedElementArgs struct {
 	Key, Element string
 }
 
-// Keyed element of a Composite literal
+// KeyedElement generates a keyed element of a composite literal: Key: Element,\n. The key and element
+// is provided by a.
 func (code *Code) KeyedElement(a *KeyedElementArgs) *Code {
+	// Return nil in case code is nil
 	if code == nil {
 		return nil
 	}
+	// Return nil in case a is nil
+	if a == nil {
+		return nil
+	}
+	// Add keyed element of a composite literal to code
 	code.c += fmt.Sprintf("%v: %v,\n", a.Key, a.Element)
+	// Return code
 	return code
 }
 
@@ -278,6 +290,10 @@ type Testvars struct {
 func (code *Code) Testvariables(t *Testvars) *Code {
 	// Return nil in case code is nil
 	if code == nil {
+		return nil
+	}
+	// Return nil in case t is nil
+	if t == nil {
 		return nil
 	}
 	// Initialize text

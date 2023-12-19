@@ -12,6 +12,13 @@ import (
 	"github.com/thorstenrie/tsfio"  // tsfio
 )
 
+var (
+	testKey   string = "foo"
+	testElem  string = "bar"
+	testIdent string = "dort"
+	testExpr  string = "mund"
+)
+
 // TestTestVariables tests generated test variables by Testvariables. The test fails if
 // the generated test variables do not match the contents of the golden file.
 func TestTestVariables(t *testing.T) {
@@ -24,14 +31,43 @@ func TestTestVariables(t *testing.T) {
 	}
 	// Retrieve test variables with Testvariables
 	c := lpcode.NewCode().Testvariables(vars)
+	// Evaluate the retrieved source code
+	if e := evalCode(c, "testvariables"); e != nil {
+		t.Error(e)
+	}
+}
+
+// evalCode evaluates the source code of c by comparing the source code
+// with the associated golden file for test case tc. The function returns
+// an error if the source code does not match the contents of the golden file.
+func evalCode(c *lpcode.Code, tc string) error {
+	// Return an error if c is nil
+	if c == nil {
+		return tserr.NilPtr()
+	}
 	// Format the retrieved code
 	if e := c.Format(); e != nil {
 		// The test fails if Format returns an error
-		t.Error(e)
+		return e
 	}
 	// Evaluate the retrieved code with the golden file
-	if e := tsfio.EvalGoldenFile(&tsfio.Testcase{Name: "testvariables", Data: c.String()}); e != nil {
+	if e := tsfio.EvalGoldenFile(&tsfio.Testcase{Name: tc, Data: c.String()}); e != nil {
 		// The test fails if the retrieved code does not match the contents of the golden file
+		return e
+	}
+	return nil
+}
+
+// TestKeyedElement tests generated source code using the short variable declaration by ShortVarDecl,
+// a keyed element by KeyedElement and function ending by FuncEnd. The test fails if the generated
+// source code does not match the contents of the golden file.
+func TestKeyedElement(t *testing.T) {
+	// Retrieve the short variable declaration with ShortVarDecl
+	c := lpcode.NewCode().ShortVarDecl(&lpcode.ShortVarDeclArgs{Ident: testIdent, Expr: testExpr + "{"})
+	// Retrieve the keyed element with KeyedElement and the function ending with FuncEnd
+	c.KeyedElement(&lpcode.KeyedElementArgs{Key: testKey, Element: testElem}).FuncEnd()
+	// Evaluate the retrieved source code
+	if e := evalCode(c, "keyedelement"); e != nil {
 		t.Error(e)
 	}
 }
@@ -58,6 +94,35 @@ func TestTestVariablesNil(t *testing.T) {
 	// The test fails if Testvariables does not return nil.
 	if n := c.Testvariables(&lpcode.Testvars{}); n != nil {
 		t.Error(tserr.NotNil("Testvariables"))
+	}
+}
+
+// TestKeyedElementNil tests KeyedElement to return nil in case
+// *Code is nil. The test fails if KeyedElement does not return nil.
+func TestKeyedElementNil(t *testing.T) {
+	// Declare c as type *Code and assign nil
+	var c *lpcode.Code = nil
+	// The test fails if KeyedElement does not return nil.
+	if n := c.KeyedElement(&lpcode.KeyedElementArgs{}); n != nil {
+		t.Error(tserr.NotNil("KeyedElementArgs"))
+	}
+}
+
+// TestTestVariablesNil2 tests Testvariables to return nil in case
+// t is nil. The test fails if Testvariables does not return nil.
+func TestTestVariablesNil2(t *testing.T) {
+	// The test fails if Testvariables does not return nil.
+	if n := lpcode.NewCode().Testvariables(nil); n != nil {
+		t.Error(tserr.NotNil("Testvariables"))
+	}
+}
+
+// TestKeyedElementNil2 tests KeyedElement to return nil in case
+// t is nil. The test fails if KeyedElement does not return nil.
+func TestKeyedElementNil2(t *testing.T) {
+	// The test fails if KeyedElement does not return nil.
+	if n := lpcode.NewCode().KeyedElement(nil); n != nil {
+		t.Error(tserr.NotNil("KeyedElement"))
 	}
 }
 

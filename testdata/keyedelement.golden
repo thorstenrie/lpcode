@@ -1,0 +1,4 @@
+dort := mund{
+	foo: bar,
+}
+
