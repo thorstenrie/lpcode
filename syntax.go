@@ -39,21 +39,27 @@ func (code *Code) String() string {
 	return code.c
 }
 
-// Line comment
+// LineComment adds a line comment and a new line to code: // c\n. The comment is provided by argument c.
 func (code *Code) LineComment(c string) *Code {
+	// Return nil if code is nil
 	if code == nil {
 		return nil
 	}
+	// Add a line comment and a new line to code
 	code.c += fmt.Sprintf("// %v\n", c)
+	// Return code
 	return code
 }
 
-// Block End with new line
+// FuncEnd adds a block end and two new lines to code: }\n\n.
 func (code *Code) FuncEnd() *Code {
+	// Return nil in case code is nil
 	if code == nil {
 		return nil
 	}
+	// Add a block end and two new lines to code
 	code.c += "}\n\n"
+	// Return code
 	return code
 }
 
@@ -212,12 +218,15 @@ func (code *Code) Addr() *Code {
 	return code
 }
 
-// Identifier
+// Ident adds an identifier to code: n. The identifier is provided by argument n.
 func (code *Code) Ident(n string) *Code {
+	// Return nil in case code is nil
 	if code == nil {
 		return nil
 	}
+	// Add identifier n to code
 	code.c += n
+	// Return code
 	return code
 }
 
@@ -243,23 +252,33 @@ func (code *Code) CompositeLit(LiteralType string) *Code {
 	return code
 }
 
+// ShortVarDeclArgs contains the identifier Ident and expression Expr to generate
+// a short variable declaration with ShortVarDecl
 type ShortVarDeclArgs struct {
 	Ident, Expr string
 }
 
-// Short variable declaration
+// ShortVarDecl generates a short variable declaration: Ident := Expr\n. The identifier
+// and expression is provided by a.
 func (code *Code) ShortVarDecl(a *ShortVarDeclArgs) *Code {
+	// Return nil in case code is nil
 	if code == nil {
 		return nil
 	}
+	// Return nil in case a is nil
+	if a == nil {
+		return nil
+	}
+	// Add a short variable declaration to code
 	code.c += fmt.Sprintf("%v := %v\n", a.Ident, a.Expr)
+	// Return code
 	return code
 }
 
-// KeyedElementArgs contains the key and element to generate
+// KeyedElementArgs contains the key Key and element Elem to generate
 // a keyed element of a composite literal with KeyedElement
 type KeyedElementArgs struct {
-	Key, Element string
+	Key, Elem string
 }
 
 // KeyedElement generates a keyed element of a composite literal: Key: Element,\n. The key and element
@@ -274,7 +293,7 @@ func (code *Code) KeyedElement(a *KeyedElementArgs) *Code {
 		return nil
 	}
 	// Add keyed element of a composite literal to code
-	code.c += fmt.Sprintf("%v: %v,\n", a.Key, a.Element)
+	code.c += fmt.Sprintf("%v: %v,\n", a.Key, a.Elem)
 	// Return code
 	return code
 }
