@@ -1,0 +1,4 @@
+type mirkwood struct {
+	fangorn    int
+	lothlorien int
+}

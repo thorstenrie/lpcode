@@ -63,39 +63,52 @@ func (code *Code) FuncEnd() *Code {
 	return code
 }
 
-// Block End
+// BlockEnd adds a block ending to code: }\n.
 func (code *Code) BlockEnd() *Code {
+	// Return nil in case code is nil
 	if code == nil {
 		return nil
 	}
+	// Add a block ending to code
 	code.c += "}\n"
+	// Return code
 	return code
 }
 
-// Function Call
+// Call adds a function call to code: n(. The function name is
+// provided by n.
 func (code *Code) Call(n string) *Code {
+	// Return nil in case code is nil
 	if code == nil {
 		return nil
 	}
+	// Add a function call to code
 	code.c += fmt.Sprintf("%v(", n)
+	// Return code
 	return code
 }
 
-// Parameters End + new line
+// ParamEndln adds a parameters ending and a new line to code: )\n.
 func (code *Code) ParamEndln() *Code {
+	// Return nil in case code is nil
 	if code == nil {
 		return nil
 	}
+	// Add a parameters ending and a new line to code
 	code.c += ")\n"
+	// Return code
 	return code
 }
 
-// Parameters End
+// ParamEnd adds a parameters ending to code: ).
 func (code *Code) ParamEnd() *Code {
+	// Return nil in case code is nil
 	if code == nil {
 		return nil
 	}
+	// Add parameters ending to code
 	code.c += ")"
+	// Return code
 	return code
 }
 
@@ -111,43 +124,59 @@ func (code *Code) Func1(a *Func1Args) *Code {
 	return code
 }
 
-// Type declaration for struct type
+// TypeStruct adds a type declaration for a struct type to code: type n struct {\n.
+// The name of the type is provided with n.
 func (code *Code) TypeStruct(n string) *Code {
+	// Return nil in case code is nil
 	if code == nil {
 		return nil
 	}
+	// Add a type declaration for a struct type to code
 	code.c += fmt.Sprintf("type %v struct {\n", n)
+	// Return code
 	return code
 }
 
-type TypeArgs struct {
-	Name, Type string
+// VarSpecArgs contains the identifier Ident and type Type to generate
+// a variable specification with VarSpec
+type VarSpecArgs struct {
+	Ident, Type string
 }
 
-// Type
-func (code *Code) Type(a *TypeArgs) *Code {
+// VarSpec adds a variable specification to code: Ident Type\n. The identifier and type
+// is provided by a.
+func (code *Code) VarSpec(a *VarSpecArgs) *Code {
+	// Return nil in case code is nil
 	if code == nil {
 		return nil
 	}
-	code.c += fmt.Sprintf("%v %v\n", a.Name, a.Type)
+	// Add a variable specification to code
+	code.c += fmt.Sprintf("%v %v\n", a.Ident, a.Type)
+	// Return code
 	return code
 }
 
-// IdentifierLIst
+// List adds an identifier list to code: , .
 func (code *Code) List() *Code {
+	// Return nil in case code is nil
 	if code == nil {
 		return nil
 	}
+	// Add an identifier list to code
 	code.c += ", "
+	// Return code
 	return code
 }
 
-// IdentifierList with new line
+// Listln adds an identifier list and a new line to code: ,\n.
 func (code *Code) Listln() *Code {
+	// Return nil in case code is nil
 	if code == nil {
 		return nil
 	}
+	// Add an identifier list and a new line to code
 	code.c += ",\n"
+	// Return code
 	return code
 }
 
@@ -155,21 +184,37 @@ type SelArgs struct {
 	Val, Sel string
 }
 
-// Field Selector
+// SelField adds a field selector to code: val.sel. The value val and selector sel are
+// provided by a. It returns nil if a is nil.
 func (code *Code) SelField(a *SelArgs) *Code {
+	// Return nil in case code is nil
 	if code == nil {
 		return nil
 	}
+	// Return nil in case a is nil
+	if a == nil {
+		return nil
+	}
+	// Add a field selector to code
 	code.c += fmt.Sprintf("%v.%v", a.Val, a.Sel)
+	// Return code
 	return code
 }
 
-// Method Selector
+// SelMethod adds a method selector to code: val.sel(. The value val and selector sel are
+// provided by a. It returns nil if a is nil.
 func (code *Code) SelMethod(a *SelArgs) *Code {
+	// Return nil in case code is nil
 	if code == nil {
 		return nil
 	}
+	// Return nil in case a is nil
+	if a == nil {
+		return nil
+	}
+	// Add a method selector to code
 	code.c += fmt.Sprintf("%v.%v(", a.Val, a.Sel)
+	// Return code
 	return code
 }
 
@@ -259,7 +304,7 @@ type ShortVarDeclArgs struct {
 }
 
 // ShortVarDecl generates a short variable declaration: Ident := Expr\n. The identifier
-// and expression is provided by a.
+// and expression is provided by a. It returns nil if a is nil.
 func (code *Code) ShortVarDecl(a *ShortVarDeclArgs) *Code {
 	// Return nil in case code is nil
 	if code == nil {
@@ -282,7 +327,7 @@ type KeyedElementArgs struct {
 }
 
 // KeyedElement generates a keyed element of a composite literal: Key: Element,\n. The key and element
-// is provided by a.
+// is provided by a. It returns nil if a is nil.
 func (code *Code) KeyedElement(a *KeyedElementArgs) *Code {
 	// Return nil in case code is nil
 	if code == nil {
@@ -306,6 +351,7 @@ type Testvars struct {
 
 // Testvariables generates test variables for unit tests. The test variables are generated based
 // on t. A test variable is generated if the corresponding type in t is not equal to zero.
+// It returns nil if t is nil.
 func (code *Code) Testvariables(t *Testvars) *Code {
 	// Return nil in case code is nil
 	if code == nil {

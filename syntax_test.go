@@ -13,11 +13,24 @@ import (
 )
 
 var (
-	testKey     string = "foo"
-	testElem    string = "bar"
-	testIdent   string = "dort"
-	testExpr    string = "mund"
-	testComment string = "Sumsemann hieß der dicke Maikaefer, der im Fruehling auf einer Kastanie im Garten von Peterchens Eltern hauste, nicht weit von der großen Wiese mit den vielen Sternblumen."
+	testKey    string = "lothlorien" // test key
+	testElem   string = "ithilien"   // test element
+	testIdent  string = "fangorn"    // test identifier
+	testExpr   string = "trollshaws" // test expression
+	testCall   string = "brethil"    // test function call
+	testStruct string = "mirkwood"   // test struct
+	testType   string = "int"        // test type
+	// test comment
+	testComment string = "Lorem ipsum dolor sit amet, " +
+		"consectetur adipisici elit, " +
+		"sed eiusmod tempor incidunt ut labore " +
+		"et dolore magna aliqua. Ut enim ad minim veniam, " +
+		"quis nostrud exercitation ullamco laboris nisi ut " +
+		"aliquid ex ea commodi consequat. Quis aute iure " +
+		"reprehenderit in voluptate velit esse cillum dolore " +
+		"eu fugiat nulla pariatur. Excepteur sint obcaecat " +
+		"cupiditat non proident, sunt in culpa qui officia " +
+		"deserunt mollit anim id est laborum."
 )
 
 // TestTestVariables tests generated test variables by Testvariables. The test fails if
@@ -39,8 +52,8 @@ func TestTestVariables(t *testing.T) {
 	}
 }
 
-// TestKeyedElement tests generated source code using the short variable declaration by ShortVarDecl,
-// a keyed element by KeyedElement and function ending by FuncEnd. The test fails if the generated
+// TestKeyedElement tests retrieved source code using the short variable declaration by ShortVarDecl,
+// a keyed element by KeyedElement and function ending by FuncEnd. The test fails if the retrieved
 // source code does not match the contents of the golden file.
 func TestKeyedElement(t *testing.T) {
 	// Retrieve the short variable declaration with ShortVarDecl
@@ -49,6 +62,57 @@ func TestKeyedElement(t *testing.T) {
 	c.KeyedElement(&lpcode.KeyedElementArgs{Key: testKey, Elem: testElem}).FuncEnd()
 	// Evaluate the retrieved source code
 	if e := evalCode(c, "keyedelement"); e != nil {
+		// The test fails if the generated source code does not match the contents of the golden file
+		t.Error(e)
+	}
+}
+
+// TestTypeStruct tests retrieved source code using the type declaration for a struct type by TypeStruct,
+// a variable specification by VarSpec and a block ending with BlockEnd. The test fails if the retrieved
+// source code does not match the contents of the golden file.
+func TestTypeStruct(t *testing.T) {
+	// Retrieve the type declaration for a struct type with TypeStruct
+	c := lpcode.NewCode().TypeStruct(testStruct)
+	// Retrieve variable specifications with VarSpec and a block ending with BlockEnd
+	c.VarSpec(&lpcode.VarSpecArgs{Ident: testIdent, Type: testType}).VarSpec(&lpcode.VarSpecArgs{Ident: testKey, Type: testType}).BlockEnd()
+	// Evaluate the retrieved source code
+	if e := evalCode(c, "typestruct"); e != nil {
+		// The test fails if the generated source code does not match the contents of the golden file
+		t.Error(e)
+	}
+}
+
+// TestSel tests retrieved source code using the field selector with SelField, the method selector with SelMethod and
+// a parameters ending with ParamEnd. The test fails if the retrieved source code does not match the contents of the golden file.
+func TestSel(t *testing.T) {
+	// Retrieve the field selector with SelField, the method selector with SelMethod and a parameters ending with ParamEnd
+	c := lpcode.NewCode().SelMethod(&lpcode.SelArgs{Val: testKey, Sel: testCall}).SelField(&lpcode.SelArgs{Val: testIdent, Sel: testType}).ParamEnd()
+	// Evaluate the retrieved source code
+	if e := evalCode(c, "testsel"); e != nil {
+		// The test fails if the generated source code does not match the contents of the golden file
+		t.Error(e)
+	}
+}
+
+// TestCall tests retrieved source code using a function call from Call, identifiers from Ident and an identifier list with List. The test fails if the
+// retrieved source code does not match the contents of the golden file.
+func TestCall(t *testing.T) {
+	// Retrieve the function call from Call, identifiers from Ident and an identifier list with List
+	c := lpcode.NewCode().Call(testCall).Ident(testIdent).List().Ident(testKey).ParamEndln()
+	// Evaluate the retrieved source code
+	if e := evalCode(c, "call"); e != nil {
+		// The test fails if the generated source code does not match the contents of the golden file
+		t.Error(e)
+	}
+}
+
+// TestCall2 tests retrieved source code using a function call from Call, identifiers from Ident and an identifier list with a line ending with Listln.
+// The test fails if the retrieved source code does not match the contents of the golden file.
+func TestCall2(t *testing.T) {
+	// Retrieve the function call from Call, identifiers from Ident and an identifier list with a line ending with Listln
+	c := lpcode.NewCode().Call(testCall).Ident(testIdent).Listln().Ident(testKey).Listln().ParamEndln()
+	// Evaluate the retrieved source code
+	if e := evalCode(c, "call2"); e != nil {
 		// The test fails if the generated source code does not match the contents of the golden file
 		t.Error(e)
 	}
@@ -77,121 +141,6 @@ func TestTestVariablesEmpty(t *testing.T) {
 	// The test fails in case the returned string is not empty
 	if c.String() != "" {
 		t.Error(tserr.NotEmpty("code"))
-	}
-}
-
-// TestTestVariablesNil tests Testvariables to return nil in case
-// *Code is nil. The test fails if Testvariables does not return nil.
-func TestTestVariablesNil(t *testing.T) {
-	// Declare c as type *Code and assign nil
-	var c *lpcode.Code = nil
-	// The test fails if Testvariables does not return nil.
-	if n := c.Testvariables(&lpcode.Testvars{}); n != nil {
-		t.Error(tserr.NotNil("Testvariables"))
-	}
-}
-
-// TestShortVarDeclNil tests ShortVarDecl to return nil in case
-// *Code is nil. The test fails if ShortVarDecl does not return nil.
-func TestShortVarDeclNil(t *testing.T) {
-	// Declare c as type *Code and assign nil
-	var c *lpcode.Code = nil
-	// The test fails if ShortVarDecl does not return nil.
-	if n := c.ShortVarDecl(&lpcode.ShortVarDeclArgs{}); n != nil {
-		t.Error(tserr.NotNil("ShortVarDecl"))
-	}
-}
-
-// TestIdentNil tests Ident to return nil in case
-// *Code is nil. The test fails if Ident does not return nil.
-func TestIdentNil(t *testing.T) {
-	// Declare c as type *Code and assign nil
-	var c *lpcode.Code = nil
-	// The test fails if Ident does not return nil.
-	if n := c.Ident(""); n != nil {
-		t.Error(tserr.NotNil("Ident"))
-	}
-}
-
-// TestLineCommentNil tests LineComment to return nil in case
-// *Code is nil. The test fails if LineComment does not return nil.
-func TestLineCommentNil(t *testing.T) {
-	// Declare c as type *Code and assign nil
-	var c *lpcode.Code = nil
-	// The test fails if LineComment does not return nil.
-	if n := c.LineComment(""); n != nil {
-		t.Error(tserr.NotNil("LineComment"))
-	}
-}
-
-// TestStringNil tests String to return an empty string in case
-// *Code is nil. The test fails if String does not return an empty string.
-func TestStringNil(t *testing.T) {
-	// Declare c as type *Code and assign nil
-	var c *lpcode.Code = nil
-	// The test fails if Ident does not return an empty string.
-	if n := c.String(); n != "" {
-		t.Error(tserr.NotNil("String"))
-	}
-}
-
-// TestFuncEndNil tests FuncEnd to return nil in case
-// *Code is nil. The test fails if FuncEnd does not return nil.
-func TestFuncEndNil(t *testing.T) {
-	// Declare c as type *Code and assign nil
-	var c *lpcode.Code = nil
-	// The test fails if FuncEnd does not return nil.
-	if n := c.FuncEnd(); n != nil {
-		t.Error(tserr.NotNil("FuncEnd"))
-	}
-}
-
-// TestKeyedElementNil tests KeyedElement to return nil in case
-// *Code is nil. The test fails if KeyedElement does not return nil.
-func TestKeyedElementNil(t *testing.T) {
-	// Declare c as type *Code and assign nil
-	var c *lpcode.Code = nil
-	// The test fails if KeyedElement does not return nil.
-	if n := c.KeyedElement(&lpcode.KeyedElementArgs{}); n != nil {
-		t.Error(tserr.NotNil("KeyedElementArgs"))
-	}
-}
-
-// TestTestVariablesNil2 tests Testvariables to return nil in case
-// t is nil. The test fails if Testvariables does not return nil.
-func TestTestVariablesNil2(t *testing.T) {
-	// The test fails if Testvariables does not return nil.
-	if n := lpcode.NewCode().Testvariables(nil); n != nil {
-		t.Error(tserr.NotNil("Testvariables"))
-	}
-}
-
-// TestShortVarDeclNil2 tests ShortVarDecl to return nil in case
-// a is nil. The test fails if ShortVarDecl dows not return nil.
-func TestShortVarDeclNil2(t *testing.T) {
-	// The test fails if ShortVarDecl does not return nil.
-	if n := lpcode.NewCode().ShortVarDecl(nil); n != nil {
-		t.Error(tserr.NotNil("ShortVarDecl"))
-	}
-}
-
-// TestKeyedElementNil2 tests KeyedElement to return nil in case
-// a is nil. The test fails if KeyedElement does not return nil.
-func TestKeyedElementNil2(t *testing.T) {
-	// The test fails if KeyedElement does not return nil.
-	if n := lpcode.NewCode().KeyedElement(nil); n != nil {
-		t.Error(tserr.NotNil("KeyedElement"))
-	}
-}
-
-// TestFormatNil tests Format to return nil in case
-// *Code is nil. The test fails if Format does not return nil.
-func TestFormatNil(t *testing.T) {
-	// Declare c as type *Code and assign nil
-	var c *lpcode.Code = nil
-	// The test fails if Format does not return nil.
-	if n := c.Format(); n == nil {
-		t.Error(tserr.NilFailed("Format"))
 	}
 }
 

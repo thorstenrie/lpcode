@@ -13,7 +13,10 @@ import (
 // evalCode evaluates the source code of c by comparing the source code
 // with the associated golden file for test case tc. The function returns
 // an error if the source code does not match the contents of the golden file.
-func evalCode(c *lpcode.Code, tc string) error {
+func evalCode(
+	c *lpcode.Code,
+	tc string,
+) error {
 	// Return an error if c is nil
 	if c == nil {
 		return tserr.NilPtr()
